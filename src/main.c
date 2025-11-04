@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "file.h"
 #include "parse.h"
+#include "crypt.h"
 #include <getopt.h>
 
 
@@ -42,14 +43,14 @@ int main(int argc, char *argv[]){
     }
 
     if (filePath == NULL) {
-        printf("Filepath is a required argument\n")
+        printf("Filepath is a required argument\n");
         printUsage(argv);
         
         return 0;
     }
 
     if (newFile) {
-        create_db_file();
+        create_db_file(filePath);
     }
 
     printf("Newfile: %d\n", newFile);
