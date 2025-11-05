@@ -48,6 +48,7 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
         free(key);
         free(iv);
         close(fd);
+        return -1;
     }
     
     if (read(fd, iv, ivSize) == -1){
@@ -55,6 +56,7 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
         free(key);
         free(iv);
         close(fd);
+        return -1;
     }
 
 
