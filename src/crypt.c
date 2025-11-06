@@ -12,7 +12,7 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
     size_t ivSize = sizeof(char)*8;
 
     if ((fd = open ("/dev/random", O_RDONLY)) == -1){
-        printf("fd failed to open\n");
+        perror("open");
         return 1;
     }
     unsigned char *key = malloc(keySize);
