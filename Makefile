@@ -13,7 +13,7 @@ run: clean default
 
 
 clean:
-
+	rm -f mydb.db
 	rm -f obj/*.o
 	rm -f bin/*
 
