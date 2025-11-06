@@ -6,6 +6,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include "parse.h"
+#include "common.h"
 
 int create_db_header(struct dbheader_t **headerOut){
 

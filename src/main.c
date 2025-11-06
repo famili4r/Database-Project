@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "file.h"
 #include "parse.h"
-
+#include "common.h"
 
 
 void printUsage(char *argv[]) {

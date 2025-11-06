@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include "file.h"
+#include "common.h"
 
 int create_db_file(char *filePath) {
     
