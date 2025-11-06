@@ -12,7 +12,6 @@ void printUsage(char *argv[]) {
     printf("Usage: %s -n -f <databasefile.db>\n", argv[0]);
     printf("\t -n - Create a new database file\n");
     printf("\t -f (Req) Path to the database file\n ");
-    printf("\t -e Encrypt the database\n");
     return;
 }
 
@@ -28,7 +27,7 @@ int main(int argc, char *argv[]){
     struct employee_t *employees = NULL;
 
 
-    while ((c = getopt(argc, argv, "nef:")) != -1){
+    while ((c = getopt(argc, argv, "nf:")) != -1){
 
         switch(c){
             case 'n':
