@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
     char *filePath = NULL;
     bool encrypt = false;
     struct dbheader_t *dbheader = NULL;
+    struct employee_t *employees = NULL;
 
 
     while ((c = getopt(argc, argv, "nef:")) != -1){
@@ -101,8 +102,8 @@ int main(int argc, char *argv[]){
         free(key);
         free(iv);
     }
-    
-    output_file(dbfd, dbheader);
+
+    output_file(dbfd, dbheader, employees);
     printf("Newfile: %d\n", newFile);
     printf("Filepath: %s\n", filePath);
 

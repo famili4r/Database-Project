@@ -72,7 +72,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
 }
 
-void output_file(int fd, struct dbheader_t *dbheader){
+void output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees){
     
     if (fd < 0) {
         printf("Bad dbfd\n");
