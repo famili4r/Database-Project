@@ -103,7 +103,11 @@ int main(int argc, char *argv[]){
         free(iv);
     }
 
-    output_file(dbfd, dbheader, employees);
+    
+    if (output_file(dbfd, dbheader, employees) == 1) {
+        printf("Failed to write into file\n");
+        return -1;
+    }
     printf("Newfile: %d\n", newFile);
     printf("Filepath: %s\n", filePath);
 

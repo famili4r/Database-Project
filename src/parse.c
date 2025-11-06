@@ -72,11 +72,11 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
 }
 
-void output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees){
+int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees){
     
     if (fd < 0) {
         printf("Bad dbfd\n");
-        return;
+        return 1;
     }
 
     dbheader->magic = htonl(dbheader->magic);
@@ -88,5 +88,5 @@ void output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employe
 
     write(fd, dbheader, sizeof(struct dbheader_t));
 
-    return;
+    return 0;
 }
