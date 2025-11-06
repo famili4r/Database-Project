@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
             printf("Failed to create the database\n");
             return -1;
         }
-        if (create_db_header(dbfd, &dbheader) == 1){
+        if (create_db_header(&dbheader) == 1){
             printf("Failed to create the database header\n");
             return -1;
         }
