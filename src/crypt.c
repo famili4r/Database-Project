@@ -13,34 +13,34 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
 
     if ((fd = open ("/dev/random", O_RDONLY)) == -1){
         printf("fd failed to open\n");
-        return -1;
+        return 1;
     }
     unsigned char *key = malloc(keySize);
     if (key == NULL){
         printf("Key buffer malloc failed\n");
         close(fd);
-        return -1;
+        return 1;
     }
     unsigned char *iv = malloc(ivSize);
     if (iv == NULL){
         printf("IV buffer malloc failed\n");
         free(key);
         close(fd);
-        return -1;
+        return 1;
     }
     if (realloc(*outKey, keySize) == NULL){
         printf("Key realloc failed\n");
         free(key);
         free(iv);
         close(fd);
-        return -1;
+        return 1;
     }
      if (realloc(*outIv, ivSize) == NULL){
         printf("IV realloc failed\n");
         free(key);
         free(iv);
         close(fd);
-        return -1;
+        return 1;
     }
 
     if (read(fd, key, keySize) == -1){
@@ -48,6 +48,7 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
         free(key);
         free(iv);
         close(fd);
+        return 1;
     }
     
     if (read(fd, iv, ivSize) == -1){
@@ -55,6 +56,7 @@ int generateKey(unsigned char **outKey, unsigned char **outIv){
         free(key);
         free(iv);
         close(fd);
+        return 1;
     }
 
 
