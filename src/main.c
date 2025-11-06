@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "file.h"
 #include "parse.h"
-#include "crypt.h"
 
 
 
@@ -79,31 +78,7 @@ int main(int argc, char *argv[]){
             return -1;
         }
     }
-
-
-    if (encrypt){
-        unsigned char *key = malloc(sizeof(char));
-        if (key == NULL){
-            printf("initial key malloc failed\n");
-            return -1;
-        }
-        unsigned char *iv = malloc(sizeof(char));
-        if (iv == NULL){
-            printf("inital iv malloc failed\n");
-            free(key);
-            return -1;
-        }
-        if (generateKey(&key, &iv) != 0){
-            printf("Key generation failed\n");
-            free(key);
-            free(iv);
-            return -1;
-        }
-        free(key);
-        free(iv);
-    }
-
-    
+ 
     if (output_file(dbfd, dbheader, employees) == 1) {
         printf("Failed to write into file\n");
         return -1;
