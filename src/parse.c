@@ -90,3 +90,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
 
     return 0;
 }
+
+int read_employees(int fd, struct dbheader_t *, struct employee_t **employeesOut) {
+    return 0;
+}
