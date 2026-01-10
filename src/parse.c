@@ -170,8 +170,13 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
     return 0;
 }
 
-void list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
+int list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
     
+    if(dbheader<0){
+        printf("Bad header\n");
+        return -1;
+    }
+
     int i = 0;
     for(;i < dbheader->count; i++){
         printf("Employee: %d\n", i);
@@ -179,4 +184,5 @@ void list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
         printf("\t Address: %s\n", employees[i].address);
         printf("\t Hours: %d\n", employees[i].hours);
     }
+    return 0;
 }

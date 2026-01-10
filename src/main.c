@@ -101,7 +101,9 @@ int main(int argc, char *argv[]){
     }
 
     if (list){
-        list_employees(dbheader, employees);
+      if (list_employees(dbheader, employees) == -1){
+        printf("Failed to list employees");
+      }
     }
 
     if (output_file(dbfd, dbheader, employees) == 1) {
