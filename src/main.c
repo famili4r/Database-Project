@@ -12,6 +12,8 @@ void printUsage(char *argv[]) {
     printf("Usage: %s -n -f <databasefile.db>\n", argv[0]);
     printf("\t -n - Create a new database file\n");
     printf("\t -f (Req) Path to the database file\n ");
+    printf("\t -a Add entry to the database\n ");
+    printf("\t -l List database entries\n ");
     return;
 }
 
@@ -24,11 +26,12 @@ int main(int argc, char *argv[]){
     char *filePath = NULL;
     char *addString = NULL;
     bool encrypt = false;
+    bool list = false;
     struct dbheader_t *dbheader = NULL;
     struct employee_t *employees = NULL;
 
 
-    while ((c = getopt(argc, argv, "nf:a:")) != -1){
+    while ((c = getopt(argc, argv, "nf:a:l")) != -1){
 
         switch(c){
             case 'n':
@@ -36,6 +39,9 @@ int main(int argc, char *argv[]){
                 break;
             case 'a':
                 addString = optarg;
+                break;
+            case 'l':
+                list = true;
                 break;
             case 'e':
                 encrypt = true;
@@ -94,11 +100,14 @@ int main(int argc, char *argv[]){
         }
     }
 
+    if (list){
+        list_employees(dbheader, employees);
+    }
+
     if (output_file(dbfd, dbheader, employees) == 1) {
         printf("Failed to write into file\n");
         return -1;
     }
-    printf("Filepath: %s\n", filePath);
 
 
     if (dbfd != -1) {

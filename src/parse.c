@@ -74,7 +74,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 }
 
 int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees){
-    
+
     if (fd < 0) {
         printf("Bad dbfd\n");
         return -1;
@@ -160,13 +160,23 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
     }
 
     dbheader->count++;
-
     strncpy(employeesDR[dbheader->count-1].name, name, sizeof(employeesDR[dbheader->count-1].name)-1);
 
     strncpy(employeesDR[dbheader->count-1].address, address, sizeof(employeesDR[dbheader->count-1].address)-1);
     employeesDR[dbheader->count-1].hours = atoi(hours);
     
     *employees = employeesDR;
-    
+
     return 0;
+}
+
+void list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
+    
+    int i = 0;
+    for(;i < dbheader->count; i++){
+        printf("Employee: %d\n", i);
+        printf("\t Name: %s\n", employees[i].name);
+        printf("\t Address: %s\n", employees[i].address);
+        printf("\t Hours: %d\n", employees[i].hours);
+    }
 }
