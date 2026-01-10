@@ -172,8 +172,10 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
 
 int list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
     
-    if(dbheader<0){
-        printf("Bad header\n");
+    if (NULL==dbheader){
+        return -1;
+    }
+    if(NULL==employees){
         return -1;
     }
 
