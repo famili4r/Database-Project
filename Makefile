@@ -9,8 +9,8 @@ OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 default: $(TARGET)
 
 run: clean default
-	./bin/app -n -f mydb.db
-
+	./$(TARGET) -n -f mydb.db
+	./$(TARGET) -f ./mydb.db -a "Test Tester,Teststreet 1,40"
 
 clean:
 	rm -f mydb.db

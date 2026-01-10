@@ -16,7 +16,7 @@ int create_db_header(struct dbheader_t **headerOut){
         printf("Create  DBHeader Malloc failed\n");
         return 1;
     }
-    header->version = 0x1;
+    header->version = HEADER_VERSION;
     header->count = 0;
     header->magic = HEADER_MAGIC;
     header->filesize = sizeof(struct dbheader_t);
@@ -34,7 +34,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
     }
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
     if (header == -1) {
-        printf("Create  DBHeader Malloc failed\n");
+        printf("Create DBHeader Malloc failed\n");
         return 1;
     }
 
@@ -49,7 +49,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
     header->magic = ntohl(header->magic);
     header->filesize = ntohl(header->filesize);
 
-    if (header->version != 1) {
+    if (header->version != HEADER_VERSION) {
         printf("Improper header version\n");
         free(header);
         return -1;
@@ -79,9 +79,9 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         printf("Bad dbfd\n");
         return 1;
     }
-
+    int realCount = dbheader->count; 
     dbheader->magic = htonl(dbheader->magic);
-    dbheader->filesize = htonl(dbheader->filesize);
+    dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount);
     dbheader->count = htons(dbheader->count);
     dbheader->version = htons(dbheader->version);
 
@@ -89,9 +89,84 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
 
     write(fd, dbheader, sizeof(struct dbheader_t));
 
+  
+    int i = 0;
+
+    for(; i < realCount; i++){
+        employees[i].hours = htonl(employees[i].hours);
+        write(fd, &employees[i], sizeof(struct employee_t));
+    }
+
+
     return 0;
 }
 
-int read_employees(int fd, struct dbheader_t *, struct employee_t **employeesOut) {
+int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **employeesOut){
+    if (fd < 0) {
+        printf("Bad dbfd\n");
+        return 1;
+    }
+    int count = dbheader->count;
+
+    struct employee_t *employees = calloc(count, sizeof(struct employee_t));
+    if (employees == -1){
+        printf("employee Malloc failed!\n");
+        return 1;
+    }
+    read(fd, employees, count*sizeof(struct employee_t));
+
+    int i = 0;
+    for (; i < count; i++){
+        employees[i].hours = htonl(employees[i].hours);
+    }
+
+    *employeesOut = employees;
+
+    return 0;
+}
+
+int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, char *addString){
+
+
+    if (NULL == dbheader){
+        return 1;
+    }
+    if (NULL == employees){
+        return 1;
+    }
+    if (NULL == *employees){
+        return 1;
+    }
+    if (NULL == addString){
+        return 1;
+    }
+
+    char *name = strtok(addString, ",");
+    if (NULL == name){
+        return 1;
+    }
+    char *address = strtok(NULL, ",");
+    if (NULL == address){
+        return 1;
+    }
+    char *hours = strtok(NULL, ",");
+    if (NULL == hours){
+        return 1;
+    }
+    struct employee_t *employeesDR = *employees;
+    employeesDR = realloc(employeesDR, sizeof(struct employee_t)*(dbheader->count+1));
+    if (employeesDR == NULL){
+        return 1;
+    }
+
+    dbheader->count++;
+
+    strncpy(employeesDR[dbheader->count-1].name, name, sizeof(employeesDR[dbheader->count-1].name)-1);
+
+    strncpy(employeesDR[dbheader->count-1].address, address, sizeof(employeesDR[dbheader->count-1].address)-1);
+    employeesDR[dbheader->count-1].hours = atoi(hours);
+    
+    *employees = employeesDR;
+    
     return 0;
 }

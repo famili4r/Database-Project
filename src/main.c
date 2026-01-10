@@ -22,16 +22,20 @@ int main(int argc, char *argv[]){
     bool newFile = false;
     int dbfd = -1;
     char *filePath = NULL;
+    char *addString = NULL;
     bool encrypt = false;
     struct dbheader_t *dbheader = NULL;
     struct employee_t *employees = NULL;
 
 
-    while ((c = getopt(argc, argv, "nf:")) != -1){
+    while ((c = getopt(argc, argv, "nf:a:")) != -1){
 
         switch(c){
             case 'n':
                 newFile = true;
+                break;
+            case 'a':
+                addString = optarg;
                 break;
             case 'e':
                 encrypt = true;
@@ -78,11 +82,22 @@ int main(int argc, char *argv[]){
         }
     }
  
+    if (read_employees(dbfd, dbheader, &employees) != 0){
+        printf("Failed to read employees\n");
+        return -1;
+    }
+
+    if (addString) {
+        if (add_employee(dbheader, &employees, addString) == 1){
+            printf("Adding Employee failed!\n");
+            return -1;
+        }
+    }
+
     if (output_file(dbfd, dbheader, employees) == 1) {
         printf("Failed to write into file\n");
         return -1;
     }
-    printf("Newfile: %d\n", newFile);
     printf("Filepath: %s\n", filePath);
 
 
@@ -90,6 +105,8 @@ int main(int argc, char *argv[]){
         close(dbfd);
     }
 
+    free(dbheader);
+    free(employees);
 
     return 0;
 }
