@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
             printf("Failed to create the database\n");
             return -1;
         }
-        if (create_db_header(&dbheader) == 1){
+        if (create_db_header(&dbheader) != 0){
             printf("Failed to create the database header\n");
             return -1;
         }
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
             return -1;
         }
 
-        if (validate_db_header(dbfd, &dbheader) == 1){
+        if (validate_db_header(dbfd, &dbheader) != 0){
             printf("Failed to validate database header\n");
             return -1;
         }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
     }
 
     if (addString) {
-        if (add_employee(dbheader, &employees, addString) == 1){
+        if (add_employee(dbheader, &employees, addString) == -1){
             printf("Adding Employee failed!\n");
             return -1;
         }
