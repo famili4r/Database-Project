@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
       }
     }
 
-    if (output_file(dbfd, dbheader, employees) == 1) {
+    if (output_file(dbfd, dbheader, employees) == -1) {
         printf("Failed to write into file\n");
         return -1;
     }
