@@ -12,7 +12,7 @@ int create_db_header(struct dbheader_t **headerOut){
 
 
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
-    if (header == -1) {
+    if (header == NULL) {
         printf("Create  DBHeader Malloc failed\n");
         return -1;
     }
@@ -33,7 +33,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
         return -1;
     }
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
-    if (header == -1) {
+    if (header == NULL) {
         printf("Create DBHeader Malloc failed\n");
         return -1;
     }
@@ -113,7 +113,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     int count = dbheader->count;
 
     struct employee_t *employees = calloc(count, sizeof(struct employee_t));
-    if (employees == -1){
+    if (employees == NULL){
         printf("employee Malloc failed!\n");
         return 1;
     }
@@ -222,6 +222,52 @@ int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, 
     *employees = employeesDR;
     return 0;
 }
+
+int adjust_hours(struct dbheader_t *dbheader, struct employee_t **employees, char *adjustString){
+        
+    if (NULL == dbheader){
+        return -1;
+    }
+    if (NULL == employees){
+        return -1;
+    }
+    if (NULL == *employees){
+        return -1;
+    }
+    if (NULL == adjustString){
+        return -1;
+    }
+
+    char *name = strtok(adjustString, ",");
+    if (NULL == name){
+        return -1;
+    }
+    char *hours = strtok(NULL, ",");
+    if (NULL == hours){
+        return -1;
+    }
+
+    struct employee_t *employeesDR = *employees;
+
+    int i = 0;
+
+    for(;i < dbheader->count; i++){
+        if (strcmp(employeesDR[i].name, name) == 0){
+            employeesDR[i].hours = atoi(hours); 
+            break;
+        }
+    }
+    *employees = employeesDR;
+    return 0;
+}
+
+
+
+
+
+
+
+
 
 int list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
     

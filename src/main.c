@@ -13,6 +13,7 @@ void printUsage(char *argv[]) {
     printf("\t -n - Create a new database file\n");
     printf("\t -f (Req) Path to the database file\n ");
     printf("\t -a Add entry to the database\n ");
+    printf("\t -r Remove entry from the database\n ");
     printf("\t -l List database entries\n ");
     return;
 }
@@ -26,13 +27,14 @@ int main(int argc, char *argv[]){
     char *filePath = NULL;
     char *addString = NULL;
     char *removeString = NULL;
+    char *adjustString = NULL;
     bool encrypt = false;
     bool list = false;
     struct dbheader_t *dbheader = NULL;
     struct employee_t *employees = NULL;
 
 
-    while ((c = getopt(argc, argv, "nf:a:lr:")) != -1){
+    while ((c = getopt(argc, argv, "nf:a:lr:c:")) != -1){
 
         switch(c){
             case 'n':
@@ -43,6 +45,9 @@ int main(int argc, char *argv[]){
                 break;
             case 'r':
                 removeString = optarg;
+                break;
+            case 'c':
+                adjustString = optarg;
                 break;
             case 'l':
                 list = true;
@@ -111,6 +116,12 @@ int main(int argc, char *argv[]){
         }
     }
 
+    if (adjustString) {
+        if (adjust_hours(dbheader, &employees, adjustString) == -1){
+            printf("Adjusting hours failed\n");
+            return -1;
+        }
+    }
 
     if (list){
       if (list_employees(dbheader, employees) == -1){
