@@ -95,6 +95,10 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     for(; i < realCount; i++){
         employees[i].hours = htonl(employees[i].hours);
         write(fd, &employees[i], sizeof(struct employee_t));
+        if(ftruncate(fd, sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount) != 0){
+            perror("ftrancate error");
+            return -1;
+        }
     }
 
 
@@ -167,6 +171,55 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
     
     *employees = employeesDR;
 
+    return 0;
+}
+
+int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, char *removeString){
+    
+    if (NULL == dbheader){
+        return -1;
+    }
+    if (NULL == employees){
+        return -1;
+    }
+    if (NULL == *employees){
+        return -1;
+    }
+    if (NULL == removeString){
+        return -1;
+    }
+    
+    struct employee_t *employeesDR = *employees;
+    employeesDR = realloc(employeesDR, sizeof(struct employee_t)*(dbheader->count));
+    if (employeesDR == NULL){
+        return -1;
+    }
+
+
+
+    int i = 0;
+
+    for(;i < dbheader->count; i++){
+        if (strcmp(employeesDR[i].name, removeString) == 0){
+
+            
+            int j = i;
+            printf("%s Deleted\n", employeesDR[j].name);
+            for (;j < dbheader->count;j++){
+                employeesDR[j] = employeesDR[j+1];
+            }
+            
+            struct employee_t *employeesShrink = employeesDR;
+            if (employeesShrink == NULL){
+                return -1;
+            }
+            employeesShrink = realloc(employeesShrink, sizeof(struct employee_t)*(dbheader->count-1));
+            dbheader->count--;
+            employeesDR = employeesShrink;
+            break;
+        }
+    }
+    *employees = employeesDR;
     return 0;
 }
 

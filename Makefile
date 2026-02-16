@@ -11,6 +11,8 @@ default: $(TARGET)
 run: clean default
 	./$(TARGET) -n -f mydb.db
 	./$(TARGET) -f ./mydb.db -a "Test Tester,Teststreet 1,40"
+	./$(TARGET) -f ./mydb.db -a "Hemuli,Muumilaakso,120"
+	./$(TARGET) -f ./mydb.db -a "Kimmo Koodari,kotikatu 1,20"
 
 clean:
 	rm -f mydb.db

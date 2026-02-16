@@ -25,13 +25,14 @@ int main(int argc, char *argv[]){
     int dbfd = -1;
     char *filePath = NULL;
     char *addString = NULL;
+    char *removeString = NULL;
     bool encrypt = false;
     bool list = false;
     struct dbheader_t *dbheader = NULL;
     struct employee_t *employees = NULL;
 
 
-    while ((c = getopt(argc, argv, "nf:a:l")) != -1){
+    while ((c = getopt(argc, argv, "nf:a:lr:")) != -1){
 
         switch(c){
             case 'n':
@@ -39,6 +40,9 @@ int main(int argc, char *argv[]){
                 break;
             case 'a':
                 addString = optarg;
+                break;
+            case 'r':
+                removeString = optarg;
                 break;
             case 'l':
                 list = true;
@@ -99,6 +103,14 @@ int main(int argc, char *argv[]){
             return -1;
         }
     }
+
+    if (removeString) {
+        if (remove_employee(dbheader, &employees, removeString) == -1){
+            printf("Removing Employee failed!\n");
+            return -1;
+        }
+    }
+
 
     if (list){
       if (list_employees(dbheader, employees) == -1){
