@@ -14,6 +14,7 @@ void printUsage(char *argv[]) {
     printf("\t -f (Req) Path to the database file\n ");
     printf("\t -a Add entry to the database\n ");
     printf("\t -r Remove entry from the database\n ");
+    printf("\t -c Adjust Employee hours in the database");
     printf("\t -l List database entries\n ");
     return;
 }

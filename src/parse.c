@@ -261,14 +261,6 @@ int adjust_hours(struct dbheader_t *dbheader, struct employee_t **employees, cha
     return 0;
 }
 
-
-
-
-
-
-
-
-
 int list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
     
     if (NULL==dbheader){
