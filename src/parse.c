@@ -98,8 +98,8 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         write(fd, &employees[i], sizeof(struct employee_t));
     }
     
-    if(ftruncate(fd, sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount) != 0){
-        perror("ftrancate error");
+    if(ftruncate(fd, sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount) == -1){
+        perror("ftruncate");
         return -1;
     }
 
