@@ -8,6 +8,22 @@
 #include "common.h"
 #include "network.h"
 
+
+void cleanUp(int dbfd, struct dbheader_t *dbheader, struct employee_t *employees){
+    
+    if (dbfd != -1) {
+        close(dbfd);
+    }
+    if (dbheader != NULL){
+        free(dbheader);
+    }
+    if (employees != NULL){
+        free(employees);
+    }
+    
+    return;
+}
+
 void printUsage(char *argv[]) {
 
     printf("Usage: %s -n -f <databasefile.db>\n", argv[0]);
@@ -20,8 +36,6 @@ void printUsage(char *argv[]) {
 
     return;
 }
-
-
 
 int main(int argc, char *argv[]){
 
@@ -86,6 +100,7 @@ int main(int argc, char *argv[]){
         }
         if (create_db_header(&dbheader) != 0){
             printf("Failed to create the database header\n");
+            cleanUp(dbfd,dbheader,employees);
             return -1;
         }
     } else {
@@ -97,18 +112,21 @@ int main(int argc, char *argv[]){
 
         if (validate_db_header(dbfd, &dbheader) != 0){
             printf("Failed to validate database header\n");
+            cleanUp(dbfd,dbheader,employees);
             return -1;
         }
     }
  
     if (read_employees(dbfd, dbheader, &employees) != 0){
         printf("Failed to read employees\n");
+        cleanUp(dbfd,dbheader,employees);
         return -1;
     }
 
     if (addString) {
         if (add_employee(dbheader, &employees, addString) == -1){
             printf("Adding Employee failed!\n");
+            cleanUp(dbfd,dbheader,employees);
             return -1;
         }
     }
@@ -116,6 +134,7 @@ int main(int argc, char *argv[]){
     if (removeString) {
         if (remove_employee(dbheader, &employees, removeString) == -1){
             printf("Removing Employee failed!\n");
+            cleanUp(dbfd,dbheader,employees);
             return -1;
         }
     }
@@ -123,6 +142,7 @@ int main(int argc, char *argv[]){
     if (adjustString) {
         if (adjust_hours(dbheader, &employees, adjustString) == -1){
             printf("Adjusting hours failed\n");
+            cleanUp(dbfd,dbheader,employees);
             return -1;
         }
     }
@@ -135,16 +155,11 @@ int main(int argc, char *argv[]){
 
     if (output_file(dbfd, dbheader, employees) == -1) {
         printf("Failed to write into file\n");
+        cleanUp(dbfd,dbheader,employees);
         return -1;
     }
 
-
-    if (dbfd != -1) {
-        close(dbfd);
-    }
-
-    free(dbheader);
-    free(employees);
+    cleanUp(dbfd,dbheader,employees);
 
     return 0;
 }

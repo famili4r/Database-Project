@@ -41,7 +41,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
     if (read(fd, header, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t)) {
         perror("open");
-        free(header);
         return -1;
     }
 
@@ -52,12 +51,10 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
     if (header->version != HEADER_VERSION) {
         printf("Improper header version\n");
-        free(header);
         return -1;
     }
     if (header->magic != HEADER_MAGIC) {
         printf("Improper header magic\n");
-        free(header);
         return -1;
     }
 
@@ -66,7 +63,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
     if (header->filesize != dbstat.st_size){
         printf("Corrupt DB\n");
-        free(header);
         return -1;
     }
 
@@ -110,7 +106,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     
     if (fd < 0) {
         printf("Bad dbfd\n");
-        return 1;
+        return -1;
     }
 
     int count = dbheader->count;
@@ -118,7 +114,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     struct employee_t *employees = calloc(count, sizeof(struct employee_t));
     if (employees == NULL){
         printf("employee Malloc failed!\n");
-        return 1;
+        return -1;
     }
 
     read(fd, employees, count*sizeof(struct employee_t));
@@ -200,7 +196,7 @@ int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, 
 
             
             int j = i;
-            for (;j < dbheader->count;j++){
+            for (;j < dbheader->count-1;j++){
                 employeesDR[j] = employeesDR[j+1];
             }
             
