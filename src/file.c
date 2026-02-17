@@ -13,6 +13,7 @@ int create_db_file(char *filePath) {
     if (fd != -1){
         printf("File already exists!\n");
         close(fd);
+
         return -1;
     }
 
@@ -33,5 +34,6 @@ int open_db_file(char *filePath) {
         perror("open");
         return -1;
     }
+    
     return fd;
 }

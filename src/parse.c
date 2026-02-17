@@ -10,28 +10,29 @@
 
 int create_db_header(struct dbheader_t **headerOut){
 
-
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
     if (header == NULL) {
         printf("Create  DBHeader Malloc failed\n");
         return -1;
     }
+
     header->version = HEADER_VERSION;
     header->count = 0;
     header->magic = HEADER_MAGIC;
     header->filesize = sizeof(struct dbheader_t);
 
     *headerOut = header;
+
     return 0;
 }
 
 int validate_db_header(int fd, struct dbheader_t **headerOut){
 
-
     if (fd < 0) {
         printf("Bad dbfd\n");
         return -1;
     }
+
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
     if (header == NULL) {
         printf("Create DBHeader Malloc failed\n");
@@ -62,15 +63,16 @@ int validate_db_header(int fd, struct dbheader_t **headerOut){
 
     struct stat dbstat = {0};
     fstat(fd, &dbstat);
+
     if (header->filesize != dbstat.st_size){
         printf("Corrupt DB\n");
         free(header);
         return -1;
     }
+
     *headerOut = header;
+
     return 0;
-
-
 }
 
 int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees){
@@ -79,6 +81,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         printf("Bad dbfd\n");
         return -1;
     }
+
     int realCount = dbheader->count; 
     dbheader->magic = htonl(dbheader->magic);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount);
@@ -88,28 +91,28 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     lseek(fd, 0, SEEK_SET);
 
     write(fd, dbheader, sizeof(struct dbheader_t));
-
   
     int i = 0;
-
     for(; i < realCount; i++){
         employees[i].hours = htonl(employees[i].hours);
         write(fd, &employees[i], sizeof(struct employee_t));
-        if(ftruncate(fd, sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount) != 0){
-            perror("ftrancate error");
-            return -1;
-        }
     }
-
+    
+    if(ftruncate(fd, sizeof(struct dbheader_t) + sizeof(struct employee_t) * realCount) != 0){
+        perror("ftrancate error");
+        return -1;
+    }
 
     return 0;
 }
 
 int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **employeesOut){
+    
     if (fd < 0) {
         printf("Bad dbfd\n");
         return 1;
     }
+
     int count = dbheader->count;
 
     struct employee_t *employees = calloc(count, sizeof(struct employee_t));
@@ -117,6 +120,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
         printf("employee Malloc failed!\n");
         return 1;
     }
+
     read(fd, employees, count*sizeof(struct employee_t));
 
     int i = 0;
@@ -130,7 +134,6 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
 }
 
 int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, char *addString){
-
 
     if (NULL == dbheader){
         return -1;
@@ -157,6 +160,7 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
     if (NULL == hours){
         return -1;
     }
+
     struct employee_t *employeesDR = *employees;
     employeesDR = realloc(employeesDR, sizeof(struct employee_t)*(dbheader->count+1));
     if (employeesDR == NULL){
@@ -165,7 +169,6 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
 
     dbheader->count++;
     strncpy(employeesDR[dbheader->count-1].name, name, sizeof(employeesDR[dbheader->count-1].name)-1);
-
     strncpy(employeesDR[dbheader->count-1].address, address, sizeof(employeesDR[dbheader->count-1].address)-1);
     employeesDR[dbheader->count-1].hours = atoi(hours);
     
@@ -175,7 +178,7 @@ int add_employee(struct dbheader_t *dbheader, struct employee_t **employees, cha
 }
 
 int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, char *removeString){
-    
+
     if (NULL == dbheader){
         return -1;
     }
@@ -190,21 +193,13 @@ int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, 
     }
     
     struct employee_t *employeesDR = *employees;
-    employeesDR = realloc(employeesDR, sizeof(struct employee_t)*(dbheader->count));
-    if (employeesDR == NULL){
-        return -1;
-    }
-
-
 
     int i = 0;
-
     for(;i < dbheader->count; i++){
         if (strcmp(employeesDR[i].name, removeString) == 0){
 
             
             int j = i;
-            printf("%s Deleted\n", employeesDR[j].name);
             for (;j < dbheader->count;j++){
                 employeesDR[j] = employeesDR[j+1];
             }
@@ -219,12 +214,14 @@ int remove_employee(struct dbheader_t *dbheader, struct employee_t **employees, 
             break;
         }
     }
+
     *employees = employeesDR;
+
     return 0;
 }
 
 int adjust_hours(struct dbheader_t *dbheader, struct employee_t **employees, char *adjustString){
-        
+       
     if (NULL == dbheader){
         return -1;
     }
@@ -258,6 +255,7 @@ int adjust_hours(struct dbheader_t *dbheader, struct employee_t **employees, cha
         }
     }
     *employees = employeesDR;
+
     return 0;
 }
 
@@ -277,5 +275,6 @@ int list_employees(struct dbheader_t *dbheader, struct employee_t *employees){
         printf("\t Address: %s\n", employees[i].address);
         printf("\t Hours: %d\n", employees[i].hours);
     }
+
     return 0;
 }

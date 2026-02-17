@@ -6,9 +6,10 @@
 #include "file.h"
 #include "parse.h"
 #include "common.h"
-
+#include "network.h"
 
 void printUsage(char *argv[]) {
+
     printf("Usage: %s -n -f <databasefile.db>\n", argv[0]);
     printf("\t -n - Create a new database file\n");
     printf("\t -f (Req) Path to the database file\n ");
@@ -16,12 +17,14 @@ void printUsage(char *argv[]) {
     printf("\t -r Remove entry from the database\n ");
     printf("\t -c Adjust Employee hours in the database");
     printf("\t -l List database entries\n ");
+
     return;
 }
 
 
 
 int main(int argc, char *argv[]){
+
     int c = 0;
     bool newFile = false;
     int dbfd = -1;
